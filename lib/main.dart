@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_api_rest/pages/home_page.dart';
+import 'package:flutter_api_rest/pages/login.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_api_rest/pages/register.dart';
  
 void main() => runApp(MyApp());
  
@@ -14,12 +15,16 @@ class MyApp extends StatelessWidget {
     
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Material App',
+      title: 'Rest Api',
       theme:ThemeData(
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity
       ),
-      home: HomePage()
+      home: LoginPage(),
+      routes:{
+        RegisterPage.routeName:(_) => RegisterPage(),
+        LoginPage.routeName:(_) => LoginPage(),
+      }
     );
   }
 }

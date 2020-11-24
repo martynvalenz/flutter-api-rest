@@ -1,19 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_api_rest/api/authentication_api.dart';
+import 'package:flutter_api_rest/utils/dialogs.dart';
 import 'package:flutter_api_rest/utils/responsive.dart';
 import 'package:flutter_api_rest/widgets/input_text.dart';
 
-class LoginForm extends StatefulWidget {
+class RegisterForm extends StatefulWidget {
   @override
-  _LoginFormState createState() => _LoginFormState();
+  _RegisterFormState createState() => _RegisterFormState();
 }
 
-class _LoginFormState extends State<LoginForm> {
+class _RegisterFormState extends State<RegisterForm> {
   GlobalKey<FormState> _formKey = new GlobalKey();
-  String _email = '', _password = '';
+  String _email = '', _password = '', _username = '';
+  final AuthenticationApi _authenticationApi = AuthenticationApi();
 
-  _submit(){
+  Future<void> _submit() async{
+    
     final isOk = _formKey.currentState.validate();
-    print('form is ok $isOk');
+    if(isOk){
+      ProgressDialog.show(context);
+      await _authenticationApi.register(
+        username: _username,
+        email: _email,
+        password: _password
+      );
+      ProgressDialog.dismiss(context);
+
+    }
   }
 
   @override
@@ -29,6 +42,20 @@ class _LoginFormState extends State<LoginForm> {
           key:_formKey,
           child: Column(
             children: [
+              InputText(
+                label:'Username',
+                fontSize: responsive.dp(responsive.isTablet ? 1.4 : 1.8),
+                onChanged: (text){
+                  _username= text;
+                },
+                validator: (text){
+                  if(text.trim().length > 5){
+                    return null;
+                  }
+                  return 'Is not a valid username';
+                },
+              ),
+              SizedBox(height: responsive.dp(3)),
               InputText(
                 label:'Email Address',
                 keyboardType:TextInputType.emailAddress,
@@ -77,7 +104,7 @@ class _LoginFormState extends State<LoginForm> {
                     FlatButton(
                       padding: EdgeInsets.symmetric(vertical: 10),
                       child:Text(
-                        'Forgot Password?',
+                        'SHOW',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: responsive.dp(responsive.isTablet ? 1.2 : 1.5)
@@ -108,11 +135,11 @@ class _LoginFormState extends State<LoginForm> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('New to friendly Desi?', style:TextStyle(fontSize: responsive.dp(1.5))),
+                  Text('Already have an account?', style:TextStyle(fontSize: responsive.dp(1.5))),
                   FlatButton(
-                    child:Text('Sign up', style: TextStyle(color:Colors.pinkAccent, fontSize: responsive.dp(1.5))),
+                    child:Text('Sign In', style: TextStyle(color:Colors.pinkAccent, fontSize: responsive.dp(1.5))),
                     onPressed: (){
-                      Navigator.pushNamed(context, 'register');
+                      Navigator.pushNamed(context, 'login');
                     },
                   )
                 ],
