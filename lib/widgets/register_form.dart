@@ -3,6 +3,7 @@ import 'package:flutter_api_rest/api/authentication_api.dart';
 import 'package:flutter_api_rest/utils/dialogs.dart';
 import 'package:flutter_api_rest/utils/responsive.dart';
 import 'package:flutter_api_rest/widgets/input_text.dart';
+import 'package:logger/logger.dart';
 
 class RegisterForm extends StatefulWidget {
   @override
@@ -13,19 +14,27 @@ class _RegisterFormState extends State<RegisterForm> {
   GlobalKey<FormState> _formKey = new GlobalKey();
   String _email = '', _password = '', _username = '';
   final AuthenticationApi _authenticationApi = AuthenticationApi();
+  Logger _logger = new Logger();
 
   Future<void> _submit() async{
     
     final isOk = _formKey.currentState.validate();
     if(isOk){
       ProgressDialog.show(context);
-      await _authenticationApi.register(
+      final res = await _authenticationApi.register(
         username: _username,
         email: _email,
         password: _password
       );
       ProgressDialog.dismiss(context);
-
+      if(res.data != null){
+        _logger.i('register ok');
+      }
+      else {
+        _logger.e('register error statusCode: ${res.error.statusCode}');
+        _logger.e('register error message: ${res.error.message}');
+        _logger.e('register error data: ${res.error.data}');
+      }
     }
   }
 
